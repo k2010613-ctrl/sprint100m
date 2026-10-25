@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="11秒台">
+<meta name="theme-color" content="#e8590c">
+<title>100m 11秒台チャレンジ</title>
+<style>
+:root{--white:#fff;--bg:#f6f7f9;--card:#fff;--tx:#1b1f24;--sub:#667085;--line:#e4e7ec;--acc:#e8590c;--ok:#2f9e44;--duty:#c92a2a;--off:#1971c2;--rest:#2f9e44;--soft:#fff4e6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101318;--card:#1a1f27;--tx:#e9edf2;--sub:#98a2b3;--line:#2b323d;--soft:#2a1f14;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#101318;--card:#1a1f27;--tx:#e9edf2;--sub:#98a2b3;--line:#2b323d;--soft:#2a1f14;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--tx);padding-bottom:calc(76px + env(safe-area-inset-bottom));-webkit-text-size-adjust:100%}
+header{padding-block:14px 2px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:640px;margin:0 auto}
+header h1{font-size:18px;margin:0}
+main{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:640px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
+.card.warn{background:var(--soft);border-color:var(--acc)}
+.card h2{font-size:16px;margin:0 0 6px}
+.card h3{font-size:13px;color:var(--sub);margin:12px 0 4px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.small{font-size:12px;color:var(--sub)}
+.bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:6px}
+.bar>i{display:block;height:100%;background:var(--acc);border-radius:6px}
+.tb{font-size:12px;font-weight:700;color:#fff;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.t-当務{background:var(--duty)}.t-非番{background:var(--off)}.t-週休{background:var(--rest)}.t-none{background:#888}
+.chk label{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px dashed var(--line);font-size:15px;line-height:1.45}
+.chk input{width:22px;height:22px;flex:none;margin-top:1px;accent-color:var(--acc)}
+.chk label.on{color:var(--sub);text-decoration:line-through}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--tx);padding:9px 14px}
+button.pri{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:700;width:100%;padding:13px;font-size:16px;margin-top:10px}
+button.link{border:none;background:none;color:var(--acc);padding:8px 0;text-decoration:underline}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+input,select,textarea{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px;width:100%}
+textarea{min-height:60px}
+label.f{display:block;font-size:13px;color:var(--sub);margin:8px 0 4px}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);z-index:10}
+nav button{border:none;border-radius:0;background:none;padding:10px 0 8px;font-size:11px;color:var(--sub);display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button span{font-size:20px}
+nav button.on{color:var(--acc);font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{font-size:12px;padding:4px 10px;border-radius:20px;border:1px solid var(--line);color:var(--sub)}
+.chip.got{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:700}
+.badges{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.bd{border:1px solid var(--line);border-radius:12px;padding:8px 4px;text-align:center;font-size:11px;color:var(--sub);opacity:.45}
+.bd b{display:block;font-size:22px}
+.bd.got{opacity:1;color:var(--tx);border-color:var(--acc);background:var(--soft)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px}
+.cal div{text-align:center;font-size:13px;padding:6px 0;border-radius:8px;min-height:44px}
+.cal .hd{font-size:11px;color:var(--sub);min-height:auto}
+.cal .d{color:#fff;cursor:pointer;position:relative}
+.cal .d.today{outline:3px solid var(--acc);outline-offset:-1px}
+.cal .d i{display:block;font-style:normal;font-size:10px;line-height:1.2}
+details{border-bottom:1px solid var(--line);padding:8px 0}
+summary{cursor:pointer;font-size:14px}
+details ul{margin:6px 0 2px;padding-left:20px;font-size:13px;line-height:1.6}
+.recl{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.recl button{padding:2px 9px}
+.big{font-size:28px;font-weight:800}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#timer{position:fixed;left:16px;right:16px;bottom:calc(84px + env(safe-area-inset-bottom));background:var(--acc);color:#fff;border-radius:14px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:20;max-width:608px;margin:0 auto;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+#timer b{font-size:30px;font-variant-numeric:tabular-nums}
+#timer button{background:#fff;color:var(--acc);border:none}
+#toast{position:fixed;left:50%;top:20px;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:12px 18px;border-radius:12px;font-size:14px;z-index:30;max-width:90%;text-align:center}
+.hidden{display:none!important}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:40;padding:16px}
+#modal>div{background:var(--card);color:var(--tx);border-radius:14px;padding:16px;width:100%;max-width:420px}
+#modal textarea{min-height:160px;font-size:12px}
+ul.rules{margin:4px 0;padding-left:20px;font-size:13px;line-height:1.7}
+</style>
+</head>
+<body>
+<header><h1>🏃 100m 11秒台チャレンジ</h1></header>
+<main id="view"></main>
+<div id="timer" class="hidden"><div><div style="font-size:12px">休憩タイマー</div><b id="tleft">0:00</b></div><button onclick="stopTimer()">止める</button></div>
+<div id="toast" class="hidden"></div>
+<div id="modal" class="hidden"><div id="mbox"></div></div>
+<nav>
+<button data-t="today" onclick="go('today')"><span>📅</span>今日</button>
+<button data-t="menu" onclick="go('menu')"><span>📋</span>メニュー</button>
+<button data-t="rec" onclick="go('rec')"><span>⏱</span>記録</button>
+<button data-t="cal" onclick="go('cal')"><span>🗓</span>勤務</button>
+<button data-t="set" onclick="go('set')"><span>⚙️</span>設定</button>
+</nav>
+<script>
+"use strict";
+/* ===== データ保存 ===== */
+const KEY='sprint100m_v1';
+const TYPES=['当務','非番','週休'];
+const DEF={cycleStart:null,pattern:['当務','非番','週休'],overrides:{},done:{},care:{},records:[],checks:{}};
+function load(){try{const o=JSON.parse(localStorage.getItem(KEY));return Object.assign(JSON.parse(JSON.stringify(DEF)),o||{})}catch(e){return JSON.parse(JSON.stringify(DEF))}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+let S=load();
+
+/* ===== 日付 ===== */
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parse=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)};
+const today=()=>ymd(new Date());
+const addDays=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return ymd(d)};
+const utc=s=>{const[a,b,c]=s.split('-').map(Number);return Date.UTC(a,b-1,c)};
+const diff=(a,b)=>Math.round((utc(b)-utc(a))/864e5);
+const WD='日月火水木金土';
+const wd=s=>WD[parse(s).getDay()];
+const fmt=s=>{const d=parse(s);return (d.getMonth()+1)+'/'+d.getDate()+'('+wd(s)+')'};
+function baseType(s){if(!S.cycleStart)return null;const n=S.pattern.length;const i=((diff(S.cycleStart,s)%n)+n)%n;return S.pattern[i]}
+function dayType(s){return S.overrides[s]||baseType(s)}
+function nextRest(from){for(let d=1;d<=40;d++){const s=addDays(from,d);if(dayType(s)==='週休')return s}return null}
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ===== トレーニングメニュー ===== */
+const r=(a,b,k)=>Math.round(a+(b-a)*k);
+const W=['ジョグ5分（アスファルトでOK）','動的ストレッチ：レッグスイング前後・左右 各10回','ドリル：もも上げ歩行／スキップ／Aスキップ 各20m×2'];
+const CD=['ジョグ3分＋ストレッチ（ハム・ふくらはぎ・股関節 各30秒）'];
+const CARE=['散歩か軽いジョグ 10分','股関節まわし 左右10回','90/90ストレッチ 左右5回','ふくらはぎ・ハムのストレッチ 各30秒','（あれば）フォームローラー 5分'];
+const PH=[
+ {name:'第1期 土台づくり',n:16,goal:'ケガせず走れる体を作る。全力ダッシュはまだ封印。',tpl:[
+  k=>({t:'流しで走りを思い出す',m:[`流し（ウィンドスプリント）60m×${r(4,6,k)}本 強さ${r(60,75,k)}%・歩いて戻る`,'力まず大きく。ダッシュ系は土の上で'],s:[`スクワット ${r(10,15,k)}回×3`,'ヒップリフト 15回×3','カーフレイズ（両脚→慣れたら片脚）15回×2',`プランク ${r(30,45,k)}秒×3`]}),
+  k=>({t:'テンポ走で心肺と脚づくり',m:[`テンポ走100m×${r(5,8,k)}本（22〜25秒の楽なペース）・100m歩いてつなぐ`],s:[`フォワードランジ 左右${r(8,12,k)}回×3`,`サイドプランク 左右${r(20,40,k)}秒×2`,'バードドッグ 左右10回×2']}),
+  k=>({t:'坂とハムの強化',m:['ドリル追加：Bスキップ・速いもも上げ10m 各×2',`緩い坂ダッシュ 10秒×${r(4,6,k)}本 強さ70%・歩いて戻る`],s:['片脚ヒップリフト 左右10回×3',`ノルディックハム（浅く・補助あり）${r(3,5,k)}回×2`,'カーフレイズ片脚 15回×2']})],
+  test:{t:'第1関門：現在地チェック',m:['流し60m×3（徐々に上げる）','30m加速走 計測×2本（90%・休4分）※まだ全力は出さない','ベストを「記録」に入れる'],s:['今日は補強なし']}},
+ {name:'第2期 加速',n:20,goal:'スタートから30mの加速を磨く。100m 13秒台の脚へ。',tpl:[
+  k=>({t:'短い加速を磨く',m:['流し60m×3',`2ポイントスタート20m×${r(4,6,k)}本 強さ${r(85,92,k)}%・休2分`,`30m加速走×${r(2,4,k)}本 90%・休3分`],s:['ブルガリアンスクワット 左右8回×3',`ノルディックハム ${r(4,6,k)}回×2`,'カーフレイズ片脚 15回×2']}),
+  k=>({t:'坂ダッシュでパワー',m:[`坂ダッシュ 約20m（4〜5秒）×${r(5,8,k)}本 90%・歩いて戻って＋1分休`,'流し60m×2（平地で感覚を戻す）'],s:['ポゴジャンプ（足首だけで跳ぶ）10回×3','スキップ高く 20m×3','プランク 45秒×3']}),
+  k=>({t:'回復テンポ',m:[`テンポ走100m×${r(6,8,k)}本 楽なペース`],s:['ランジウォーク 20m×3','サイドプランク 左右40秒×2','90/90ストレッチ 左右5回']})],
+  test:{t:'第2関門：加速チェック',m:['流し60m×3','30m計測×2本（全力・休4分）','60m計測×1本（全力・休5分）','ベストを「記録」に入れる'],s:['今日は補強なし']}},
+ {name:'第3期 最高速',n:20,goal:'トップスピードを上げる。12秒台が見えてくる。',tpl:[
+  k=>({t:'最高速を体験',m:['流し60m×3',`フライング20m（助走20m→全力20m）×${r(3,5,k)}本・休4分`,'60m×2本 95%・休5分'],s:['ノルディックハム 6回×2','ブルガリアンスクワット 左右8回×3']}),
+  k=>({t:'スタート強化',m:['流し60m×2',`3ポイントスタート30m×${r(4,6,k)}本 全力・休3分`,'50m×2本 95%・休4分'],s:['ポゴジャンプ 10回×3','カーフレイズ片脚 20回×2']}),
+  k=>({t:'バネとテンポ',m:[`バウンディング30m×${r(3,5,k)}本（土の上・歩いて戻る）`,'テンポ走100m×6本'],s:['プランク 60秒×2','サイドプランク 左右45秒×2']})],
+  test:{t:'第3関門：100m初計測',m:['流し60m×3','30m計測×1本（全力）','100m計測×1本（全力・休みは十分に）','ベストを「記録」に入れる'],s:['今日は補強なし']}},
+ {name:'第4期 仕上げ',n:20,goal:'後半の失速を減らして、11秒台を狙う。',tpl:[
+  k=>({t:'スピード持久',m:['流し60m×3',`${k<0.5?120:150}m×${r(3,4,k)}本 90〜95%・休7〜8分`],s:['ノルディックハム 6回×2','プランク 60秒×2']}),
+  k=>({t:'最高速の維持',m:['流し60m×3','フライング30m×3本 全力・休5分',`80m×${r(2,3,k)}本 95%・休6分`],s:['ポゴジャンプ 10回×3']}),
+  k=>({t:'調整テンポ',m:[`テンポ走150m×${r(4,6,k)}本 楽なペース`],s:['ドリル一式を丁寧に','90/90ストレッチ 左右5回']})],
+  test:{t:'最終関門：100m本番',m:['ウォームアップ長め（20分）','流し60m×3','100m計測×2本（全力・休10分以上）','結果を「記録」に入れる'],s:['今日は補強なし']}}
+];
+const SESS=[];
+PH.forEach((p,pi)=>{for(let i=0;i<p.n;i++){const last=i===p.n-1;const o=last?p.test:p.tpl[i%3](i/(p.n-2));SESS.push({phase:pi,no:SESS.length+1,title:o.t,main:o.m,sub:o.s,test:last})}});
+const doneN=()=>Object.keys(S.done).length;
+function curIdx(){for(let i=0;i<SESS.length;i++)if(!S.done[i])return i;return SESS.length}
+function phaseDone(pi){return SESS.every((s,i)=>s.phase!==pi||S.done[i])}
+function best(t){const v=S.records.filter(x=>x.type===t).map(x=>x.v);return v.length?Math.min(...v):Infinity}
+
+/* ===== バッジ ===== */
+const BADGES=[
+ {e:'👟',n:'はじめの一歩',f:()=>doneN()>=1},
+ {e:'🔟',n:'10回達成',f:()=>doneN()>=10},
+ {e:'💪',n:'30回達成',f:()=>doneN()>=30},
+ {e:'🔥',n:'50回達成',f:()=>doneN()>=50},
+ {e:'🧱',n:'土台完成',f:()=>phaseDone(0)},
+ {e:'🚀',n:'加速クリア',f:()=>phaseDone(1)},
+ {e:'⚡',n:'最高速クリア',f:()=>phaseDone(2)},
+ {e:'🏆',n:'完走',f:()=>phaseDone(3)},
+ {e:'🧘',n:'ケア10回',f:()=>Object.keys(S.care).length>=10},
+ {e:'⏱',n:'30m 5秒切り',f:()=>best('30m')<5.0},
+ {e:'🎯',n:'30m 4.6',f:()=>best('30m')<=4.6},
+ {e:'🌪',n:'30m 4.4',f:()=>best('30m')<=4.4},
+ {e:'1️⃣',n:'100m 14秒切り',f:()=>best('100m')<14.0},
+ {e:'2️⃣',n:'100m 13.5',f:()=>best('100m')<=13.5},
+ {e:'3️⃣',n:'100m 13秒切り',f:()=>best('100m')<13.0},
+ {e:'4️⃣',n:'100m 12.5',f:()=>best('100m')<=12.5},
+ {e:'5️⃣',n:'100m 12秒切り',f:()=>best('100m')<12.0},
+ {e:'👑',n:'11秒台！',f:()=>best('100m')<=11.99}
+];
+const earned=()=>BADGES.filter(b=>b.f()).map(b=>b.n);
+function withBadges(fn){const b=earned();fn();save();const a=earned().filter(x=>!b.includes(x));if(a.length)toast('🎉 バッジ獲得：'+a.join('、'))}
+
+/* ===== 画面 ===== */
+let tab='today',forceMain=false,careMode=false,calMonth=null,recType='100m';
+const view=document.getElementById('view');
+function go(t){tab=t;forceMain=false;careMode=false;render();scrollTo(0,0)}
+function render(){document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===tab));view.innerHTML={today:vToday,menu:vMenu,rec:vRec,cal:vCal,set:vSet}[tab]()}
+const tb=t=>`<span class="tb t-${t||'none'}">${t||'未設定'}</span>`;
+
+function vToday(){
+ const t=today(),ty=dayType(t),cur=curIdx(),n=doneN();let h='';
+ if(!S.cycleStart)h+=`<div class="card warn">最初に「設定」で直近の当務日を入れてな。勤務サイクルから練習日を出すで。<button class="pri" onclick="go('set')">設定へ</button></div>`;
+ const pi=cur<SESS.length?SESS[cur].phase:3,pn=SESS.filter((s,i)=>s.phase===pi&&S.done[i]).length;
+ h+=`<div class="card"><div class="row"><b>${fmt(t)}</b>${tb(ty)}</div>
+ <div class="small" style="margin-top:8px">全体 ${n}/${SESS.length}回</div><div class="bar"><i style="width:${n/SESS.length*100}%"></i></div>
+ <div class="small" style="margin-top:8px">${PH[pi].name}　${pn}/${PH[pi].n}回</div><div class="bar"><i style="width:${pn/PH[pi].n*100}%;background:var(--ok)"></i></div></div>`;
+ const td=Object.entries(S.done).find(([k,v])=>v.date===t);
+ const nr=nextRest(t);
+ if(td){h+=`<div class="card"><h2>🎉 今日のメニュー完了！</h2><div>#${+td[0]+1} ${esc(SESS[td[0]].title)}</div><div class="small" style="margin-top:6px">次の練習日：${nr?fmt(nr):'—'}　ゆっくり休んでな。</div></div>`;return h+badgeCard()}
+ if(cur>=SESS.length)return h+`<div class="card"><h2>🏆 全メニュー完走！</h2>ほんまにお疲れさん。記録を見返してみて。</div>`+badgeCard();
+ if(careMode)return h+careCard(t,'今日はケアに切替。回数は減らへんで。')+`<button class="link" onclick="careMode=false;render()">← メインに戻る</button>`;
+ if(ty==='週休'||forceMain||!ty)return h+sessionCard(cur)+`<button class="link" onclick="careMode=true;render()">寝不足・疲れが残ってる → 今日はケアに切替</button>`;
+ if(ty==='非番')return h+careCard(t,'当務明けやからメインは無し。やるなら軽いケアだけ（任意）。')+`<div class="card"><div class="small">次の練習日：${nr?fmt(nr):'—'}</div><div>#${cur+1} ${esc(SESS[cur].title)}</div></div><button class="link" onclick="forceMain=true;render()">体調ええから次のメニューを今日やる</button>`;
+ return h+`<div class="card"><h2>🚒 今日は仕事</h2>練習は休み。仕事に集中してな。<div class="small" style="margin-top:8px">次の練習日：${nr?fmt(nr):'—'}</div><div>#${cur+1} ${esc(SESS[cur].title)}</div></div>`;
+}
+function badgeCard(){const g=earned();return `<div class="card"><h2>バッジ ${g.length}/${BADGES.length}</h2><div class="badges">${BADGES.map(b=>`<div class="bd ${g.includes(b.n)?'got':''}"><b>${b.e}</b>${b.n}</div>`).join('')}</div></div>`}
+function careCard(t,msg){
+ return `<div class="card"><h2>🧘 ケアメニュー</h2><div class="small">${msg}</div><div class="chk">${CARE.map(x=>`<label><input type="checkbox" onchange="this.parentNode.classList.toggle('on',this.checked)">${x}</label>`).join('')}</div>
+ ${S.care[t]?'<div style="margin-top:10px;color:var(--ok);font-weight:700">✔ 今日のケア済み</div>':`<button class="pri" onclick="doCare()">ケア完了</button>`}</div>`;
+}
+function doCare(){withBadges(()=>{S.care[today()]=true});render()}
+function sessionCard(i){
+ const s=SESS[i],c=S.checks[i]||{};let j=0;
+ const sec=(name,arr)=>`<h3>${name}</h3><div class="chk">${arr.map(x=>{const k=j++;return `<label class="${c[k]?'on':''}"><input type="checkbox" ${c[k]?'checked':''} onchange="chk(${i},${k},this)">${esc(x)}</label>`}).join('')}</div>`;
+ const all=W.length+s.main.length+s.sub.length+CD.length,cnt=Object.values(c).filter(Boolean).length;
+ return `<div class="card"><div class="row"><h2>#${s.no} ${esc(s.title)}</h2>${s.test?'<span class="tb t-週休">計測日</span>':''}</div>
+ <div class="small">${PH[s.phase].name}　チェック ${cnt}/${all}</div>
+ ${sec('ウォームアップ',W)}${sec('メイン',s.main)}${sec('補強',s.sub)}${sec('クールダウン',CD)}
+ <h3>休憩タイマー</h3><div class="btns">${[60,120,180,240,300].map(x=>`<button onclick="startTimer(${x})">${x/60}分</button>`).join('')}</div>
+ ${s.test?`<button class="link" onclick="go('rec')">⏱ 記録を入れる</button>`:''}
+ <label class="f">きつさ（1楽〜10限界）</label><select id="rpe">${[...Array(10)].map((_,k)=>`<option ${k===5?'selected':''}>${k+1}</option>`).join('')}</select>
+ <label class="f">メモ（体の張り・感覚など）</label><textarea id="memo"></textarea>
+ <button class="pri" onclick="complete(${i})">メニュー完了！</button></div>`;
+}
+function chk(i,k,el){S.checks[i]=S.checks[i]||{};S.checks[i][k]=el.checked;el.parentNode.classList.toggle('on',el.checked);save();
+ const s=SESS[i],all=W.length+s.main.length+s.sub.length+CD.length,cnt=Object.values(S.checks[i]).filter(Boolean).length;
+ const sm=el.closest('.card').querySelector('.small');if(sm)sm.textContent=PH[s.phase].name+'　チェック '+cnt+'/'+all}
+function complete(i){
+ const rpe=+document.getElementById('rpe').value,memo=document.getElementById('memo').value;
+ withBadges(()=>{S.done[i]={date:today(),rpe,memo};delete S.checks[i]});forceMain=false;render();scrollTo(0,0);
+}
+
+function vMenu(){
+ let h=`<div class="card"><h2>守るルール</h2><ul class="rules">
+ <li>当務は練習なし。非番は軽いケアだけ（任意）</li>
+ <li>メニューは日付やなく「順番」。空いても次の練習日に続きをやるだけ</li>
+ <li>ハム・ふくらはぎ・アキレス腱に違和感が出たら即中止。次回はテンポ走かケアに差し替え</li>
+ <li>ダッシュ系は土の上で。アスファルトはジョグとドリルまで</li>
+ <li>寝不足・疲れが残る週休は「ケアに切替」でOK</li>
+ <li>ウォームアップは絶対に省かない</li>
+ <li>体重が軽くなるほど脚の負担もタイムも楽になる</li></ul></div>`;
+ PH.forEach((p,pi)=>{
+  const d=SESS.filter((s,i)=>s.phase===pi&&S.done[i]).length;
+  h+=`<div class="card"><div class="row"><h2>${p.name}</h2><span class="small">${d}/${p.n}</span></div><div class="small">${p.goal}</div>`;
+  SESS.forEach((s,i)=>{if(s.phase!==pi)return;const dn=S.done[i];
+   h+=`<details><summary>${dn?'✅':(s.test?'🏁':'⬜')} #${s.no} ${esc(s.title)}${dn?` <span class="small">${fmt(dn.date)} きつさ${dn.rpe}</span>`:''}</summary><ul>${s.main.map(x=>`<li>${esc(x)}</li>`).join('')}${s.sub.map(x=>`<li class="small">${esc(x)}</li>`).join('')}</ul>${dn&&dn.memo?`<div class="small">📝 ${esc(dn.memo)}</div>`:''}${dn?`<button class="link" onclick="undo(${i})">完了を取り消す</button>`:''}</details>`});
+  h+='</div>'});
+ return h;
+}
+function undo(i){ask('#'+(i+1)+' の完了を取り消す？',()=>{delete S.done[i];save();render()})}
+
+const RT=['100m','60m','30m','体重'];
+function vRec(){
+ const b=t=>{const v=best(t);return v===Infinity?'—':v.toFixed(2)};
+ const wts=S.records.filter(x=>x.type==='体重').sort((a,c)=>a.d<c.d?-1:1);
+ let h=`<div class="card"><h2>記録を入れる</h2><div class="grid2"><div><label class="f">種目</label><select id="rt">${RT.map(t=>`<option ${t===recType?'selected':''}>${t}</option>`).join('')}</select></div>
+ <div><label class="f">日付</label><input type="date" id="rd" value="${today()}"></div></div>
+ <label class="f">タイム（秒）／体重（kg）</label><input type="number" id="rv" step="0.01" inputmode="decimal" placeholder="例 13.85">
+ <button class="pri" onclick="addRec()">保存</button>
+ <div class="small" style="margin-top:8px">計測のコツ：スマホで横から動画を撮って、スタートの動き出し〜ゴール通過をコマ送りで測ると手動より正確。手動計時は電気計時より0.2秒くらい速く出るで。</div></div>
+ <div class="card"><h2>ベスト</h2><div class="grid2">
+ <div><div class="small">100m</div><div class="big">${b('100m')}</div></div><div><div class="small">60m</div><div class="big">${b('60m')}</div></div>
+ <div><div class="small">30m</div><div class="big">${b('30m')}</div></div><div><div class="small">体重（最新）</div><div class="big">${wts.length?wts[wts.length-1].v.toFixed(1):'—'}</div></div></div>
+ <h3>100mの道のり</h3><div class="chips">${[14.0,13.5,13.0,12.5,12.0,11.99].map(x=>`<span class="chip ${best('100m')<=x?'got':''}">${x.toFixed(2)}</span>`).join('')}</div></div>
+ <div class="card"><div class="btns">${RT.map(t=>`<button style="${t===recType?'background:var(--acc);color:#fff;border-color:var(--acc)':''}" onclick="recType='${t}';render()">${t}</button>`).join('')}</div>${chart(recType)}
+ ${S.records.map((x,i)=>[x,i]).filter(([x])=>x.type===recType).sort((a,c)=>a[0].d<c[0].d?1:-1).map(([x,i])=>`<div class="recl"><span>${fmt(x.d)}</span><b>${x.v.toFixed(2)}${x.type==='体重'?' kg':' 秒'}</b><button onclick="delRec(${i})">×</button></div>`).join('')||'<div class="small" style="margin-top:8px">まだ記録なし</div>'}</div>`;
+ return h;
+}
+function chart(t){
+ const p=S.records.filter(x=>x.type===t).sort((a,c)=>a.d<c.d?-1:1);if(p.length<2)return '';
+ const W2=320,H=150,P=28,vs=p.map(x=>x.v),mn=Math.min(...vs),mx=Math.max(...vs),rg=(mx-mn)||1;
+ const xy=p.map((x,i)=>[P+(W2-P*2)*i/(p.length-1),P/2+(H-P)*(x.v-mn)/rg]);
+ return `<svg viewBox="0 0 ${W2} ${H}" style="width:100%;margin-top:10px"><polyline fill="none" stroke="var(--acc)" stroke-width="2.5" points="${xy.map(a=>a.join(',')).join(' ')}"/>${xy.map(a=>`<circle cx="${a[0]}" cy="${a[1]}" r="4" fill="var(--acc)"/>`).join('')}
+ <text x="2" y="${P/2+4}" font-size="11" fill="var(--sub)">${mn.toFixed(2)}</text><text x="2" y="${H-P/2+4}" font-size="11" fill="var(--sub)">${mx.toFixed(2)}</text></svg><div class="small">${t==='体重'?'下ほど軽い':'上ほど速い'}</div>`;
+}
+function addRec(){const t=document.getElementById('rt').value,d=document.getElementById('rd').value,v=parseFloat(document.getElementById('rv').value);
+ if(!d||!(v>0)){toast('値を入れてな');return}
+ const ob=best(t);withBadges(()=>{S.records.push({type:t,d,v})});recType=t;
+ if(t!=='体重'&&v<ob&&ob!==Infinity)toast('🔥 '+t+' 自己ベスト更新！ '+v.toFixed(2));render()}
+function delRec(i){ask('この記録を消す？',()=>{S.records.splice(i,1);save();render()})}
+
+function vCal(){
+ if(!calMonth){const d=new Date();calMonth=ymd(new Date(d.getFullYear(),d.getMonth(),1))}
+ const f=parse(calMonth),y=f.getFullYear(),m=f.getMonth(),days=new Date(y,m+1,0).getDate(),t=today();
+ const dd={};Object.entries(S.done).forEach(([k,v])=>dd[v.date]=+k+1);
+ let g=[...WD].map(x=>`<div class="hd">${x}</div>`).join('')+'<div></div>'.repeat(f.getDay());
+ for(let i=1;i<=days;i++){const s=ymd(new Date(y,m,i)),ty=dayType(s);
+  g+=`<div class="d t-${ty||'none'} ${s===t?'today':''}" onclick="toggleDay('${s}')">${i}<i>${ty?ty:''}</i><i>${dd[s]?'✅#'+dd[s]:(S.care[s]?'🧘':'')}${S.overrides[s]?'＊':''}</i></div>`}
+ return `<div class="card"><div class="row"><button onclick="mv(-1)">◀</button><b>${y}年${m+1}月</b><button onclick="mv(1)">▶</button></div><div class="cal">${g}</div>
+ <div class="small" style="margin-top:8px">日付をタップすると勤務が 当務→非番→週休 と切り替わる（年休・勤務変更用、＊が変更した日）。</div></div>`;
+}
+function mv(n){const f=parse(calMonth);calMonth=ymd(new Date(f.getFullYear(),f.getMonth()+n,1));render()}
+function toggleDay(s){const c=dayType(s),nx=TYPES[(TYPES.indexOf(c)+1)%3];if(nx===baseType(s))delete S.overrides[s];else S.overrides[s]=nx;save();render()}
+
+function vSet(){
+ return `<div class="card"><h2>勤務サイクル</h2><label class="f">直近の「当務」の日</label><input type="date" value="${S.cycleStart||''}" onchange="S.cycleStart=this.value||null;save();toast('保存したで')">
+ <label class="f">サイクル（カンマ区切り：当務・非番・週休）</label><input value="${S.pattern.join(',')}" onchange="setPat(this.value)">
+ <div class="small" style="margin-top:6px">サイクルの1つ目が上の日付になる。例：当務,非番,週休</div></div>
+ <div class="card"><h2>バックアップ</h2><div class="small">記録はこのスマホのブラウザ内に保存されとる。機種変更やブラウザのデータ削除で消えるから、たまに書き出しといてな。</div>
+ <div class="btns"><button onclick="exp()">ファイルに書き出し</button><button onclick="expText()">文字で書き出し</button><button onclick="impText()">貼り付けで読み込み</button><button onclick="document.getElementById('imp').click()">ファイルから読み込み</button></div><input type="file" id="imp" accept=".json,application/json" class="hidden" onchange="imp(this)"></div>
+ <div class="card"><h2>リセット</h2><button onclick="reset()">全データを消す</button></div>`;
+}
+function setPat(v){const a=v.split(/[,、，\s]+/).filter(Boolean);if(!a.length||a.some(x=>!TYPES.includes(x))){toast('当務・非番・週休だけで書いてな');render();return}S.pattern=a;save();toast('保存したで')}
+function exp(){const b=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='sprint100m-backup-'+today().replace(/-/g,'')+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);toast('バックアップを保存したで')}
+function expText(){const j=JSON.stringify(S);openModal(`<h2 style="margin:0 0 6px;font-size:16px">バックアップ</h2><div class="small">下の文字を全部コピーして、メモ帳などに保存しといてな。</div><textarea id="expTx" readonly>${esc(j)}</textarea><div class="btns"><button onclick="copyExp()">コピー</button><button onclick="closeModal()">閉じる</button></div>`)}
+function copyExp(){const t=document.getElementById('expTx');navigator.clipboard&&navigator.clipboard.writeText(t.value).then(()=>toast('コピーしたで')).catch(()=>{t.select();toast('選択したから長押しでコピーして')})||(t.select(),toast('選択したから長押しでコピーして'))}
+function impText(){openModal(`<h2 style="margin:0 0 6px;font-size:16px">バックアップを貼り付け</h2><textarea id="impTx" placeholder="保存しておいた文字を貼り付け"></textarea><div class="btns"><button onclick="loadJSON(document.getElementById('impTx').value)">読み込む</button><button onclick="closeModal()">やめる</button></div>`)}
+function loadJSON(txt){try{const o=JSON.parse(txt);if(typeof o!=='object'||!o||!o.done)throw 0;S=Object.assign(JSON.parse(JSON.stringify(DEF)),o);save();closeModal();toast('読み込んだで');render()}catch(e){toast('読み込み失敗：中身を確認して')}}
+function openModal(h){document.getElementById('mbox').innerHTML=h;document.getElementById('modal').classList.remove('hidden')}
+function closeModal(){document.getElementById('modal').classList.add('hidden')}
+function ask(msg,fn){openModal(`<div style="font-size:15px;margin-bottom:12px">${esc(msg)}</div><div class="btns"><button id="askOk" style="background:var(--duty);color:var(--white);border-color:var(--duty)">はい</button><button onclick="closeModal()">やめる</button></div>`);document.getElementById('askOk').onclick=()=>{closeModal();fn()}}
+function imp(inp){const f=inp.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>loadJSON(rd.result);rd.readAsText(f)}
+function reset(){ask('ほんまに全部消す？（元に戻せへん）',()=>{S=JSON.parse(JSON.stringify(DEF));save();render()})}
+
+/* ===== タイマー・通知 ===== */
+let TI=null,AC=null,TEND=0;
+function startTimer(sec){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}
+ clearInterval(TI);TEND=Date.now()+sec*1000;document.getElementById('timer').classList.remove('hidden');tick();TI=setInterval(tick,250)}
+function tick(){const l=Math.max(0,Math.ceil((TEND-Date.now())/1000));document.getElementById('tleft').textContent=Math.floor(l/60)+':'+pad(l%60);
+ if(l<=0){clearInterval(TI);beep();if(navigator.vibrate)navigator.vibrate([300,150,300,150,300]);document.getElementById('tleft').textContent='次いこか！';setTimeout(stopTimer,4000)}}
+function stopTimer(){clearInterval(TI);document.getElementById('timer').classList.add('hidden')}
+function beep(){try{[0,.4,.8].forEach(t=>{const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=880;g.gain.value=.25;o.connect(g);g.connect(AC.destination);o.start(AC.currentTime+t);o.stop(AC.currentTime+t+.25)})}catch(e){}}
+let TT=null;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.remove('hidden');clearTimeout(TT);TT=setTimeout(()=>t.classList.add('hidden'),3000)}
+
+render();
+if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+</script>
+</body>
+</html>
